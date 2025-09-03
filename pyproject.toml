@@ -1,0 +1,23 @@
+[project]
+name = "arcft"
+version = "0.1.0"
+description = "ARC fine-tuning data prep and evaluation utilities"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "openai>=1.40.0",
+    "typer>=0.9.0",
+    "tqdm>=4.66.0",
+    "orjson>=3.9.10",
+    "python-dotenv>=1.0.1",
+]
+
+[project.scripts]
+arcft-prep = "arcft.scripts.prepare_finetune_jsonl:app"
+arcft-eval = "arcft.scripts.evaluate_model:app"
+arcft-create-ft = "arcft.scripts.create_finetune_job:app"
+arcft-augment = "arcft.scripts.augment_dataset:app"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
