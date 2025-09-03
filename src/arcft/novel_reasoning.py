@@ -172,7 +172,6 @@ Your analysis:"""
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.7,
                 max_completion_tokens=1000
             )
             return response.choices[0].message.content.strip()
@@ -204,7 +203,6 @@ Your hypotheses:"""
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.8,
                 max_completion_tokens=800
             )
             return response.choices[0].message.content.strip()
@@ -240,7 +238,7 @@ Format your response clearly separating the two approaches."""
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": context}],
-                temperature=0.9,
+
                 max_completion_tokens=1500
             )
             content = response.choices[0].message.content.strip()
@@ -278,7 +276,7 @@ Format as a structured list."""
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.6,
+
                 max_completion_tokens=1000
             )
             
@@ -420,7 +418,7 @@ Format your response clearly."""
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.7,
+
                 max_completion_tokens=1200
             )
             
