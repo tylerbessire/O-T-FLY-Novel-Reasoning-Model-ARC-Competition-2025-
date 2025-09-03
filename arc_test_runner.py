@@ -148,10 +148,11 @@ Use 0 for empty cells and the appropriate numbers for filled cells based on the 
             solve_time = time.time() - start_time
             
             # Extract the answer from the reasoning result
-            if reasoning_result and reasoning_result.answers:
-                # Use the first answer (primary answer)
-                primary_answer = reasoning_result.answers[0]
-                predicted_grid = self.parse_grid_response(primary_answer.answer)
+            if reasoning_result and 'dual_answers' in reasoning_result:
+                # Use the primary answer from dual answers
+                dual_answers = reasoning_result['dual_answers']
+                primary_answer = dual_answers.get('primary_answer', 'No answer found')
+                predicted_grid = self.parse_grid_response(primary_answer)
                 
                 if predicted_grid:
                     # For now, we can't verify against expected output since test data doesn't have solutions
