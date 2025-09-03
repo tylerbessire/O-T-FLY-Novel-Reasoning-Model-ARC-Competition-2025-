@@ -173,7 +173,7 @@ Your analysis:"""
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7,
-                max_tokens=1000
+                max_completion_tokens=1000
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
@@ -205,7 +205,7 @@ Your hypotheses:"""
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.8,
-                max_tokens=800
+                max_completion_tokens=800
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
@@ -241,7 +241,7 @@ Format your response clearly separating the two approaches."""
                 model=self.model,
                 messages=[{"role": "user", "content": context}],
                 temperature=0.9,
-                max_tokens=1500
+                max_completion_tokens=1500
             )
             content = response.choices[0].message.content.strip()
             
@@ -279,7 +279,7 @@ Format as a structured list."""
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.6,
-                max_tokens=1000
+                max_completion_tokens=1000
             )
             
             # Parse the response to extract rules
@@ -421,7 +421,7 @@ Format your response clearly."""
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7,
-                max_tokens=1200
+                max_completion_tokens=1200
             )
             
             content = response.choices[0].message.content.strip()
