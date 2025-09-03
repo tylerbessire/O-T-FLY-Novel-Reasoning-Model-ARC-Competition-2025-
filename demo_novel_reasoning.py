@@ -59,31 +59,30 @@ async def demo_novel_reasoning():
             
             # Display the reasoning process
             print("🧠 REASONING PROCESS:")
-            print(f"   Meta-cognitive reflection: {result.meta_cognition}")
-            print(f"   Hypotheses generated: {len(result.hypotheses)}")
+            print(f"   Character thoughts generated: {len(result['character_thoughts'])}")
+            print(f"   Hypotheses generated: {len(result['hypotheses'].split()) if result['hypotheses'] else 0}")
             
             # Display hypotheses
-            for i, hypothesis in enumerate(result.hypotheses):
-                print(f"   Hypothesis {i+1}: {hypothesis}")
+            if result['hypotheses']:
+                print(f"   Hypotheses: {result['hypotheses'][:200]}...")
             
             # Display answers
-            print(f"\n💡 ANSWERS GENERATED: {len(result.answers)}")
-            for i, answer in enumerate(result.answers):
-                print(f"\n   Answer {i+1} (Confidence: {answer.confidence:.1f}%):")
-                print(f"   {answer.answer}")
-                print(f"   Reasoning: {answer.reasoning}")
+            dual_answers = result['dual_answers']
+            print(f"\n💡 ANSWERS GENERATED: 2")
+            print(f"\n   Answer 1 (Confidence: {dual_answers['primary_confidence']:.1f}):")
+            print(f"   {dual_answers['primary_answer']}")
+            print(f"\n   Answer 2 (Confidence: {dual_answers['alternative_confidence']:.1f}):")
+            print(f"   {dual_answers['alternative_answer']}")
             
             # Display learned rules
-            if result.learned_rules:
-                print(f"\n📚 RULES LEARNED: {len(result.learned_rules)}")
-                for rule in result.learned_rules:
-                    print(f"   • {rule}")
+            if result['new_rules_learned'] > 0:
+                print(f"\n📚 RULES LEARNED: {result['new_rules_learned']}")
             
             # Display philosophical character insights
-            if result.character_insights:
+            if result['character_thoughts']:
                 print(f"\n🎭 PHILOSOPHICAL CHARACTER INSIGHTS:")
-                for character, insight in result.character_insights.items():
-                    print(f"   {character}: {insight}")
+                for character, insight in result['character_thoughts'].items():
+                    print(f"   {character}: {insight[:100]}...")
             
             print("\n🎉 Demo completed successfully!")
             print("   The novel reasoning engine demonstrated:")
@@ -148,14 +147,14 @@ async def demo_arc_style_problem():
             
             # Display the pattern analysis
             print("🔍 PATTERN ANALYSIS:")
-            for i, hypothesis in enumerate(result.hypotheses):
-                print(f"   Pattern {i+1}: {hypothesis}")
+            if result['hypotheses']:
+                print(f"   Pattern Analysis: {result['hypotheses'][:200]}...")
             
             # Display the solution
             print(f"\n💡 SOLUTION:")
-            for i, answer in enumerate(result.answers):
-                print(f"   Answer {i+1}: {answer.answer}")
-                print(f"   Reasoning: {answer.reasoning}")
+            dual_answers = result['dual_answers']
+            print(f"   Answer 1: {dual_answers['primary_answer']}")
+            print(f"   Answer 2: {dual_answers['alternative_answer']}")
             
             print("\n🎯 This demonstrates the engine's ability to:")
             print("   • Identify mathematical patterns")

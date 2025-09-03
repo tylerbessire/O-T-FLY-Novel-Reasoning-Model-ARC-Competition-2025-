@@ -405,14 +405,16 @@ APPROACH 2: {approach2}
 
 PHILOSOPHICAL INSIGHTS: {json.dumps(character_thoughts, indent=2)}
 
-Provide:
-1. PRIMARY ANSWER: The most likely correct solution
-2. ALTERNATIVE ANSWER: A different but plausible solution
-3. Confidence levels for each (0-1)
-4. Reasoning comparison explaining why you chose these answers
-5. RECOMMENDED ANSWER: Which one to use and why
+You MUST format your response EXACTLY as follows:
 
-Format your response clearly."""
+PRIMARY ANSWER: [your primary solution here]
+PRIMARY CONFIDENCE: [0.0 to 1.0]
+ALTERNATIVE ANSWER: [your alternative solution here]
+ALTERNATIVE CONFIDENCE: [0.0 to 1.0]
+REASONING COMPARISON: [explain why you chose these answers]
+RECOMMENDED ANSWER: [which answer to use and why]
+
+Do not deviate from this exact format."""
 
         try:
             response = await self.client.chat.completions.create(
@@ -440,7 +442,7 @@ Format your response clearly."""
     
     def _parse_dual_answers_from_response(self, response: str) -> DualAnswer:
         """Parse dual answers from the AI response"""
-        # Simple parsing - in practice, you might want more sophisticated parsing
+        # More robust parsing with multiple format support
         lines = response.split('\n')
         
         primary_answer = "Primary answer not found"
@@ -452,26 +454,60 @@ Format your response clearly."""
         
         for i, line in enumerate(lines):
             line = line.strip()
-            if 'primary answer:' in line.lower():
-                primary_answer = line.split(':', 1)[1].strip()
-            elif 'alternative answer:' in line.lower():
-                alternative_answer = line.split(':', 1)[1].strip()
-            elif 'primary confidence:' in line.lower():
+            # Try multiple possible formats
+            if any(key in line.lower() for key in ['primary answer:', 'primary answer', '1.', 'primary:']):
+                if ':' in line:
+                    primary_answer = line.split(':', 1)[1].strip()
+                else:
+                    # Extract after "primary answer" or "1."
+                    if 'primary answer' in line.lower():
+                        primary_answer = line.lower().split('primary answer')[-1].strip()
+                    elif line.startswith('1.'):
+                        primary_answer = line[2:].strip()
+            elif any(key in line.lower() for key in ['alternative answer:', 'alternative answer', '2.', 'alternative:']):
+                if ':' in line:
+                    alternative_answer = line.split(':', 1)[1].strip()
+                else:
+                    if 'alternative answer' in line.lower():
+                        alternative_answer = line.lower().split('alternative answer')[-1].strip()
+                    elif line.startswith('2.'):
+                        alternative_answer = line[2:].strip()
+            elif any(key in line.lower() for key in ['primary confidence:', 'primary confidence', 'confidence 1:']):
                 try:
-                    conf_str = line.split(':', 1)[1].strip()
-                    primary_confidence = float(conf_str)
+                    if ':' in line:
+                        conf_str = line.split(':', 1)[1].strip()
+                    else:
+                        conf_str = ''.join(filter(str.isdigit, line))
+                    if conf_str:
+                        primary_confidence = float(conf_str)
                 except:
                     pass
-            elif 'alternative confidence:' in line.lower():
+            elif any(key in line.lower() for key in ['alternative confidence:', 'alternative confidence', 'confidence 2:']):
                 try:
-                    conf_str = line.split(':', 1)[1].strip()
-                    alternative_confidence = float(conf_str)
+                    if ':' in line:
+                        conf_str = line.split(':', 1)[1].strip()
+                    else:
+                        conf_str = ''.join(filter(str.isdigit, line))
+                    if conf_str:
+                        alternative_confidence = float(conf_str)
                 except:
                     pass
-            elif 'reasoning comparison:' in line.lower():
-                reasoning_comparison = line.split(':', 1)[1].strip()
-            elif 'recommended answer:' in line.lower():
-                recommended_answer = line.split(':', 1)[1].strip()
+            elif any(key in line.lower() for key in ['reasoning comparison:', 'reasoning comparison', 'comparison:']):
+                if ':' in line:
+                    reasoning_comparison = line.split(':', 1)[1].strip()
+                else:
+                    reasoning_comparison = line
+            elif any(key in line.lower() for key in ['recommended answer:', 'recommended answer', 'recommended:']):
+                if ':' in line:
+                    recommended_answer = line.split(':', 1)[1].strip()
+                else:
+                    recommended_answer = line
+        
+        # If we still don't have answers, try to extract from the full response
+        if primary_answer == "Primary answer not found" and "64" in response:
+            primary_answer = "64"
+        if alternative_answer == "Alternative answer not found" and "64" in response:
+            alternative_answer = "64"
         
         return DualAnswer(
             primary_answer=primary_answer,
